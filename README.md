@@ -15,4 +15,4 @@
   - mariaDB
 
 ## 모델링
-![alt insta-aquery] (insta_aquery_byDoori.png)
+![alt insta-aquery](https://github.com/gollumnima/instagram-api/blob/main/insta_aquery_byDoori.png?raw=true)
