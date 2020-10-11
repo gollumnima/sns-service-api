@@ -15,4 +15,4 @@
   - mariaDB
 
 ## 모델링
-![alt insta-aquery] (./insta_aquery_byDoori.png)
+![alt insta-aquery] (insta_aquery_byDoori.png)
