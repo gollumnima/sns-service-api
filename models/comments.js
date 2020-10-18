@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Comments = sequlize.define(
+const Comments = sequelize.define(
   'Comments', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -26,7 +26,8 @@ const Comments = sequlize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-  },
+  }, { tableName: 'comments', underscored: true, timestamps: false },
+
 );
 
 module.exports = Comments;

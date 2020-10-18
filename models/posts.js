@@ -1,8 +1,9 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Posts = sequlize.define(
+const Posts = sequelize.define(
   'Posts', {
+    // id는 원래 자동으로 만들어줌! 안써줘도 되긴 함
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
@@ -32,6 +33,7 @@ const Posts = sequlize.define(
       allowNull: false,
     },
   },
+  { tableName: 'posts', underscored: true, timestamps: false },
 );
 
 module.exports = Posts;

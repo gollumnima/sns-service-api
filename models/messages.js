@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Messages = sequlize.define(
+const Messages = sequelize.define(
   'Messages', {
     sender: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -24,7 +24,8 @@ const Messages = sequlize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
-  },
+  }, { tableName: 'messages', underscored: true, timestamps: false },
+
 );
 
 module.exports = Messages;

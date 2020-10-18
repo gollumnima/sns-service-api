@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Likes = sequlize.define(
+const Likes = sequelize.define(
   'Likes', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -17,7 +17,8 @@ const Likes = sequlize.define(
       type: DataTypes.BOOLEAN,
       // TINYINT(1)과 같음
     },
-  },
+  }, { tableName: 'likes', underscored: true, timestamps: false },
+
 );
 
 module.exports = Likes;

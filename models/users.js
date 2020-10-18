@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Users = sequlize.define(
+const Users = sequelize.define(
   'Users', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -45,7 +45,8 @@ const Users = sequlize.define(
       allowNull: false,
       defaultValue: 'PUBLIC',
     },
-  },
+  }, { tableName: 'users', underscored: true, timestamps: false },
+
 );
 
 module.exports = Users;

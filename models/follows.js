@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Follows = sequlize.define(
+const Follows = sequelize.define(
   'Follows', {
     follower: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -21,5 +21,6 @@ const Follows = sequlize.define(
       allowNull: true,
     },
   },
+  { tableName: 'follows', underscored: true, timestamps: false },
 );
 module.exports = Follows;

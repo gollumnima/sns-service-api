@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Saves = sequlize.define(
+const Saves = sequelize.define(
   'Saves', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -26,6 +26,7 @@ const Saves = sequlize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
-  },
+  }, { tableName: 'saves', underscored: true, timestamps: false },
+
 );
 module.exports = Saves;

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequlize = require('../db');
+const sequelize = require('../db/connection');
 
-const Tags = sequlize.define(
+const Tags = sequelize.define(
   'Tags', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -13,8 +13,8 @@ const Tags = sequlize.define(
       type: DataTypes.STRING(500),
       allowNull: false,
     },
-
   },
+  { tableName: 'tags', underscored: true, timestamps: false },
 );
 
 module.exports = Tags;
