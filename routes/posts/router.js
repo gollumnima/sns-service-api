@@ -4,11 +4,14 @@ const router = express.Router();
 
 const { Posts, Users } = require('../../models');
 const { checkToken } = require('../../utils/checkToken');
+const { control } = require('../../utils/control');
 
 router.get('/', async (req, res) => {
   try {
     const { rows, count } = await Posts.findAndCountAll({
-      where: {},
+      where: {
+        deleted_at: null,
+      },
       include: [{
         model: Users,
         attributes: {
@@ -25,13 +28,13 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', checkToken, async (req, res) => {
   try {
-    const { user } = req;
+    const { id: user_id } = req.user;
     const { content } = req.body;
     const result = await Posts.create({
       content,
-      user_id: user.id,
+      user_id,
     });
     res.json(result);
   } catch (err) {
@@ -40,15 +43,68 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-
-});
-
-router.put('/:id', async (req, res) => {
-
-});
-router.delete('/:id', async (req, res) => {
   try {
+    const { id } = req.params;
+    const post = await Posts.findOne({
+      where: { id },
+      include: [
+        {
+          model: Users,
+          attributes: {
+            exclude: ['password'],
+          },
+        },
+      ],
+    });
+    if (!post) return res.status(401).json({});
+    return res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
+// 수정 메소드
+router.put('/:id', checkToken, async (req, res) => {
+  try {
+    // 외부 세계에서 가져오는 값들
+    const { id } = req.params;
+    const { user } = req;
+    const { content } = req.body;
+
+    // 내부 서비스로직으로 올바르게 전달
+    const [result] = await Posts.update({
+      content,
+    }, {
+      where: {
+        id,
+        user_id: user.id,
+      },
+    });
+
+    // 외부 세계로 결과물을 응답
+    if (!result) return res.status(404).json({});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// 삭제 메소드
+router.delete('/:id', checkToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user } = req;
+    const [result] = await Posts.update({
+      status: 'DELETED',
+      deleted_at: Date.now(),
+    }, {
+      where: {
+        id,
+        user_id: user.id,
+      },
+    });
+    if (!result) return res.status(404).json({});
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

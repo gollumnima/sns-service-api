@@ -1,10 +1,11 @@
+// 절대 프로덕션 모드에서 하면 안됨!
 const init = (model, data = []) => model.bulkCreate(data);
 const bcrypt = require('bcrypt');
 // sequelize가 모델링 후의 시점에서 관여하게끔!
 // models는 models 폴더의 index.js에서 export 하는 부분
 const sync = async (sequelize, models) => {
   await sequelize.sync({ force: true });
-  // server.js에서 db.sync({ fonce: true})와 같음
+  // server.js에서 db.sync({ force: true})와 같음
   await init(models.Users, [{
     username: 'test1',
     password: await bcrypt.hash('1234', 10),
@@ -39,7 +40,33 @@ const sync = async (sequelize, models) => {
       user_id: '1',
       created_at: 1602942793079,
       updated_at: Date.now(),
-
+    },
+  ]);
+  await init(models.Comments, [
+    {
+      post_id: 3,
+      user_id: 1,
+      content: '신난다 댓글이다~~~',
+      created_at: 1602942793079,
+      updated_at: Date.now(),
+    }, {
+      post_id: 3,
+      user_id: 2,
+      content: '신난다 룰루랄라~~~~',
+      created_at: 1602942793079,
+      updated_at: Date.now(),
+    }, {
+      post_id: 1,
+      user_id: 2,
+      content: '오예~~~~~~',
+      created_at: 1602942793079,
+      updated_at: Date.now(),
+    }, {
+      post_id: 2,
+      user_id: 1,
+      content: '밥먹자~~~~~',
+      created_at: 1602942793079,
+      updated_at: Date.now(),
     },
   ]);
 };

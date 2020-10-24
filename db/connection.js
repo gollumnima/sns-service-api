@@ -9,11 +9,11 @@ const sequelize = new Sequelize({
   dialectOptions: {
     timezone: 'Asia/Seoul',
   },
-  // logging: false, // 해보지 말자.
   host: DB_HOST,
   database: DB_NAME,
   username: DB_USERNAME,
   password: DB_PASSWORD,
+  logging: false,
 });
 
 module.exports = sequelize;

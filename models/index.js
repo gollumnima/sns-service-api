@@ -1,4 +1,5 @@
 // 관게로 엮기 위해 인덱스 만듬
+const Comments = require('./comments');
 const Posts = require('./posts');
 const Users = require('./users');
 
@@ -7,10 +8,15 @@ const Users = require('./users');
 // constraints : 외래키 만들 떄 제약조건이 생김. 3가지 제약조건이 있는데 가장 많이 쓰는게 cascade, no ation,
 
 Users.hasMany(Posts, { foreignKey: 'user_id', constraints: false });
+
 Posts.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
+Posts.hasMany(Comments, { foreignKey: 'post_id', constraints: false });
+
+Comments.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
+Comments.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
 
 module.exports = {
-  Users, Posts,
+  Users, Posts, Comments,
 };
 
 // 유저 123

@@ -11,9 +11,7 @@ const router = express.Router();
 
 const { AUTH_TOKEN_SECRET } = process.env;
 
-router.use(checkToken);
-
-router.get('/', async (req, res) => {
+router.get('/', checkToken, async (req, res) => {
   try {
     const users = await Users.findAll();
 
@@ -46,34 +44,33 @@ router.post('/', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { username, password: requestedPassword } = req.body;
-    const findResult = await Users.findOne({
+    const { dataValues: findResult } = await Users.findOne({
       where: { username },
     });
 
     if (!findResult) return res.status(401).json({});
-    console.log(findResult, 'fifififi');
 
     // 로그인하면ㅅ ㅓ내가 로그인한 패스워드를 주지 않으니까 암호만 비구조화 할당으로 따로 변수를 떼고 나머진 암호가 제거된 애들을 돌려주기
 
     const { password: hashedPassword, ...user } = findResult;
-    const flag = await bcrypt.compare(requestedPassword, user.password); // 해싱되기 전과 후의 암호
+    const flag = await bcrypt.compare(requestedPassword, hashedPassword); // 해싱되기 전과 후의 암호
 
     // 해당 유저네임이 쓰는 암호와 맞지 않을때
     if (!flag) return res.status(401).json({});
 
-    const token = jwt.sign({ id: user.id, AUTH_TOKEN_SECRET });
+    console.log(user);
+
+    const token = await jwt.sign({ id: user.id }, AUTH_TOKEN_SECRET);
+
     res.status(200).json({
       token,
     });
-
-    console.log('user', user);
-    console.log('flag', flag);
   } catch (err) {
     res.status(500).json(err.message);
   }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', checkToken, (req, res) => {
   const [shouldBeBearer, token] = req.headers.authorization.split(' ');
   const tokenResult = jwt.verify(token, AUTH_TOKEN_SECRET);
   console.log({ shouldBeBearer, token, tokenResult });

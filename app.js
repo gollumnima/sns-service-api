@@ -1,12 +1,13 @@
 const express = require('express');
+const logger = require('morgan');
 
 const app = express();
 const routes = require('./routes');
 
 app.use(express.json());
-app.use(routes);
-
 app.disable('etag');
+app.use(logger('dev'));
+app.use(routes);
 
 // app.get('/', (req, res) => {
 //   res.status(200).send('이백오케');

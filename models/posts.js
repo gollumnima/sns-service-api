@@ -22,6 +22,7 @@ const Posts = sequelize.define(
     update_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+      onUpdate: DataTypes.NOW,
       allowNull: false,
     },
     deleted_at: {
@@ -31,6 +32,11 @@ const Posts = sequelize.define(
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM('POSTED', 'DELETED'),
+      allowNull: false,
+      defaultValue: 'POSTED',
     },
   },
   { tableName: 'posts', underscored: true, timestamps: false },

@@ -9,10 +9,6 @@ const Comments = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    post_id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
-    },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -25,6 +21,11 @@ const Comments = sequelize.define(
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM('POSTED', 'DELETED'),
+      allowNull: false,
+      defaultValue: 'POSTED',
     },
   }, { tableName: 'comments', underscored: true, timestamps: false },
 
