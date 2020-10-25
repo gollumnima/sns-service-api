@@ -1,6 +1,24 @@
-const control = (message, callback) => async (req, res, next) => {
-  const result = await callback(req, next);
-  res.json(result);
+const { reject, HTTP_ERROR } = require('./reject');
+
+const control = callback => async (req, res, next) => {
+  try {
+    const result = await callback({ req, next });
+    res.json(result);
+  } catch (err) {
+    if (err[HTTP_ERROR]) {
+      const { statusCode, message, data } = err;
+      console.log('내가 만든 에러');
+      return res.status(statusCode).json({ message, data });
+    }
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// 클래스를 생성한 이후 레퍼러를 만들어 줌. -> 공개 생성자 패턴(?)
+
+module.exports = {
+  control,
+  reject,
 };
 
 // 전통적인 컨트롤러는 라우팅부터 DAO 실행까지 처리하고, 결과물을 View에게 전달하는 것 까지

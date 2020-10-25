@@ -4,7 +4,17 @@ const router = express.Router();
 
 const { Posts, Users } = require('../../models');
 const { checkToken } = require('../../utils/checkToken');
-const { control } = require('../../utils/control');
+const { control, reject } = require('../../utils/control');
+
+const someServiceWithError = async () => reject(400);
+
+// 라우터 두번째 인자는 함수여야 하기 깨문에 컨트롤이 실행된 결과가 함수여야 작동이 됨
+router.get('/test', control(async ({ next }) => {
+  await someServiceWithError();
+  return {
+    foo: 1,
+  };
+}));
 
 router.get('/', async (req, res) => {
   try {

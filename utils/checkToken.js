@@ -17,7 +17,6 @@ const checkToken = async (req, res, next) => {
     req.user = foundUser;
     next();
   } catch (err) {
-    console.error(err);
     res.status(401).json({
       message: 'unauthenticate',
     });
