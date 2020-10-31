@@ -13,6 +13,7 @@ const Posts = sequelize.define(
     user_id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+
     },
     created_at: {
       type: DataTypes.DATE,

@@ -24,6 +24,7 @@ const Users = sequelize.define(
     description: {
       type: DataTypes.STRING(200),
       allowNull: false,
+      defaultValue: '',
     },
     created_at: {
       type: DataTypes.DATE,
