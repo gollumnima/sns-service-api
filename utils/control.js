@@ -1,7 +1,16 @@
+const { validator } = require('express-validator');
 const { reject, HTTP_ERROR } = require('./reject');
+
+const checkValidation = async req => {
+
+};
 
 const control = callback => async (req, res, next) => {
   try {
+    const errors = validator.validationResult(req);
+    if (!errors.isEmpty()) {
+      await reject(400, 'Request Validation Failed', errors.array());
+    }
     const result = await callback({ req, next });
     res.json(result);
   } catch (err) {
