@@ -3,6 +3,8 @@ const logger = require('morgan');
 
 const pages = require('./pages');
 
+const csv = require('./utils/csv');
+
 const app = express();
 const routes = require('./routes');
 
