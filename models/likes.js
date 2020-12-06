@@ -13,9 +13,18 @@ const Likes = sequelize.define(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
-    is_active: {
-      type: DataTypes.BOOLEAN,
-      // TINYINT(1)과 같음
+    user_id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   }, { tableName: 'likes', underscored: true, timestamps: false },
 
