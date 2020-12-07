@@ -1,8 +1,8 @@
 // 관게로 엮기 위해 인덱스 만듬
-const Comments = require('./comments');
-const Posts = require('./posts');
 const Users = require('./users');
-const Files = require('./files');
+const Posts = require('./posts');
+const Images = require('./images');
+const Comments = require('./comments');
 const Likes = require('./likes');
 
 // 원투매니 관계를 만들어줌
@@ -11,8 +11,8 @@ const Likes = require('./likes');
 Posts.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
 Users.hasMany(Posts, { foreignKey: 'user_id', constraints: false });
 
-Posts.hasMany(Files, { foreignKey: 'post_id', constraints: false });
-Files.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
+Posts.hasMany(Images, { foreignKey: 'post_id', constraints: false });
+Images.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
 
 Posts.hasMany(Likes, { foreignKey: 'post_id', constraints: false });
 Likes.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
@@ -23,7 +23,11 @@ Comments.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
 Comments.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
 
 module.exports = {
-  Users, Posts, Comments,
+  Users,
+  Posts,
+  Images,
+  Comments,
+  Likes,
 };
 
 // 유저 123

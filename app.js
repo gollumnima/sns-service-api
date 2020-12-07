@@ -1,12 +1,20 @@
+const path = require('path');
 const express = require('express');
-const logger = require('morgan');
 
 const app = express();
 const routes = require('./routes');
 
+const {
+  NODE_ENV,
+} = process.env;
+
 app.use(express.json());
-app.disable('etag');
-app.use(logger('dev'));
+
+if (NODE_ENV !== 'production') {
+  app.disable('etag');
+}
+
+app.use(express.static(path.join(__dirname, './static')));
 app.use('/api', routes);
 
 // app.get('/', (req, res) => {

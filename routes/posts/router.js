@@ -1,24 +1,32 @@
 const path = require('path');
+const fs = require('fs');
 
+const lodash = require('lodash');
 const express = require('express');
 
 const router = express.Router();
 const validator = require('express-validator');
 const multer = require('multer');
 
+const fileDir = path.join(__dirname, '../../static');
+
+if (!fs.existsSync(fileDir)) {
+  fs.mkdirSync(fileDir);
+}
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '../../files')),
+  destination: (req, file, cb) => cb(null, fileDir),
   filename(req, file, cb) {
-    const ext = file.originalname.split('.').pop();
-    cb(null, `file.${Date.now()}.${ext}`);
+    const words = file.originalname.split('.');
+    const filename = words.slice(0, -1).join('');
+    const ext = words.slice(-1).join('');
+    cb(null, `${encodeURIComponent(filename)}.${Date.now()}.${ext}`);
   },
 });
 
-const upload = multer({
-  storage,
-});
+const upload = multer({ storage });
 
-const { Posts, Users } = require('../../models');
+const { Posts, Users, Images } = require('../../models');
 const { checkToken } = require('../../utils/checkToken');
 const { control, reject } = require('../../utils/control');
 
@@ -53,7 +61,7 @@ router.post('/', [
     content,
     user_id: user.id,
   });
-  return result;
+  return result.dataValues;
 }));
 
 router.get('/:id', [
@@ -74,14 +82,29 @@ router.get('/:id', [
   return post || reject(404);
 }));
 
-router.post('/:id/file', [
-  validator.param('id').isInt({ min: 1 }),
+router.post('/:post_id/file', [
+  validator.param('post_id').isInt({ min: 1 }),
 ], checkToken, upload.single('file'), control(async ({ req }) => {
-  const { user } = req;
-  const { file } = req.file;
+  const { user, file } = req;
+  const { post_id } = req.params;
   if (!user) return reject(401);
   if (!file) return reject(400);
-  return file;
+
+  const post = await Posts.findOne({
+    where: { id: post_id, user_id: user.id },
+  });
+  if (!post) return reject(404);
+
+  const url = file.path.replace(fileDir, '');
+
+  const image = await Images.create({
+    post_id,
+    url,
+    filename: file.originalname,
+    type: file.mimetype,
+  });
+
+  return image.dataValues;
 }));
 
 router.get('/:id', [

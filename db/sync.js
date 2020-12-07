@@ -12,14 +12,14 @@ const sync = async (sequelize, models) => {
     await init(models.Users, [{
       username: 'test1',
       password: await bcrypt.hash('1234', 10),
-      display_name: 'testname1',
+      name: 'testname1',
       description: '테스트하는 유저1입니다',
       status: 'PUBLIC',
       created_at: '2020-10-02 09:00:00',
     }, {
       username: 'test2',
       password: await bcrypt.hash('5678', 10),
-      display_name: 'testname2',
+      name: 'testname2',
       description: '테스트하는 유저2입니다',
       status: 'PRIVATE',
       created_at: '2020-10-02 10:00:00',

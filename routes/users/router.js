@@ -22,8 +22,8 @@ router.get('/', checkToken, control(async ({ req }) => {
 
 // 회원가입
 router.post('/', [
-  validator.body('username').isLength({ min: 4 }),
-  validator.body('name').isLength({ min: 4 }),
+  validator.body('username').isLength({ min: 4, max: 20 }),
+  validator.body('name').isLength({ min: 1, max: 40 }),
   validator.body('password').isLength({ min: 4 }),
 ], control(async ({ req }) => {
   const { username, password, name } = req.body;
@@ -33,7 +33,8 @@ router.post('/', [
     name,
     password: hashedPassword,
   });
-  return result;
+  const { password: _, ...user } = result.dataValues;
+  return user;
 }));
 
 router.post('/login', [
@@ -58,7 +59,7 @@ router.post('/login', [
 
 router.get('/:id', [
   validator.param('id').isInt({ min: 1 }),
-], checkToken, control(async ({ req }) => {
+], control(async ({ req }) => {
   const { id } = req.params;
   const foundUser = await Users.findOne({
     where: {

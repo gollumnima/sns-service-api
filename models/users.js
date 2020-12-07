@@ -17,7 +17,7 @@ const Users = sequelize.define(
       type: DataTypes.STRING(200),
       allowNull: false,
     },
-    display_name: {
+    name: {
       type: DataTypes.STRING(20),
       allowNull: false,
     },
