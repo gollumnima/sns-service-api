@@ -9,15 +9,6 @@ const Comments = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -26,6 +17,15 @@ const Comments = sequelize.define(
       type: DataTypes.ENUM('POSTED', 'DELETED'),
       allowNull: false,
       defaultValue: 'POSTED',
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   }, { tableName: 'comments', underscored: true, timestamps: false },
 

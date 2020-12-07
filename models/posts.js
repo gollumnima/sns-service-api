@@ -13,7 +13,15 @@ const Posts = sequelize.define(
     user_id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
-
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM('POSTED', 'DELETED'),
+      allowNull: false,
+      defaultValue: 'POSTED',
     },
     created_at: {
       type: DataTypes.DATE,
@@ -29,15 +37,6 @@ const Posts = sequelize.define(
     deleted_at: {
       type: DataTypes.DATE,
       allowNull: true,
-    },
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.ENUM('POSTED', 'DELETED'),
-      allowNull: false,
-      defaultValue: 'POSTED',
     },
   },
   { tableName: 'posts', underscored: true, timestamps: false },
