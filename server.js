@@ -7,7 +7,9 @@ const sequelize = require('./db/connection');
 const sync = require('./db/sync');
 const models = require('./models');
 
-http.createServer(app).listen(8000, err => {
+const { PORT: port = 8000 } = process.env;
+
+http.createServer(app).listen(port, err => {
   if (err) {
     console.err(err);
     process.exit(1);
