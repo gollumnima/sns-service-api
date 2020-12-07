@@ -1,9 +1,5 @@
-const { validator } = require('express-validator');
+const validator = require('express-validator');
 const { reject, HTTP_ERROR } = require('./reject');
-
-const checkValidation = async req => {
-
-};
 
 const control = callback => async (req, res, next) => {
   try {
@@ -14,12 +10,13 @@ const control = callback => async (req, res, next) => {
     const result = await callback({ req, next });
     res.json(result);
   } catch (err) {
+    console.error(err);
     if (err[HTTP_ERROR]) {
       const { statusCode, message, data } = err;
       console.log('내가 만든 에러');
       return res.status(statusCode).json({ message, data });
     }
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
