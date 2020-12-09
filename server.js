@@ -14,6 +14,8 @@ http.createServer(app).listen(port, err => {
     console.err(err);
     process.exit(1);
   }
+  console.log('SERVER START');
+  console.log(`http://127.0.0.1:${port}`);
   // db.sync({ force: true });
   sync(sequelize, models);
 });
