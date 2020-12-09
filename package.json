@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon ./server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "git reset --hard && git pull --prune && npm i && pm2 reload all"
+    "deploy": "git reset --hard && git pull --prune && npm i && pm2 reload all && pm2 list && pm2 log"
   },
   "keywords": [],
   "author": "",
