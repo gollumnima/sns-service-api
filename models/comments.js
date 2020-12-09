@@ -12,10 +12,13 @@ const Comments = sequelize.define('Comments', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  status: {
-    type: DataTypes.ENUM('POSTED', 'DELETED'),
+  post_id: {
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
-    defaultValue: 'POSTED',
+  },
+  user_id: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
   },
   created_at: {
     type: DataTypes.DATE,
