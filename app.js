@@ -10,13 +10,13 @@ const {
 } = process.env;
 
 const whitelist = [
+  'http://localhost:3000',
   'http://127.0.0.1:3000',
-  'http://example2.com',
+  'http://15.165.17.58',
 ];
 
 app.use(cors({
   origin: (origin, cb) => {
-    console.log('origin: ', origin);
     const result = whitelist.includes(origin);
     return result ? cb(null, true) : cb(new Error());
   },
