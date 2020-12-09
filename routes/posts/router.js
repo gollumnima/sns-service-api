@@ -69,7 +69,7 @@ router.get('/:id', [
   return post || reject(404);
 }));
 
-router.post('/:postId/file', [
+router.post('/:postId/image', [
   validator.param('postId').isInt({ min: 1 }),
 ], checkToken, upload('file'), control(async ({ req }) => {
   const { user, file } = req;
