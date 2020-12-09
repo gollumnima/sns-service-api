@@ -46,6 +46,8 @@ router.get('/', [
       attributes: {
         exclude: ['password'],
       },
+    }, {
+      model: Images,
     }],
   });
   return { rows, count };
@@ -77,6 +79,9 @@ router.get('/:id', [
           exclude: ['password'],
         },
       },
+      {
+        model: Images,
+      },
     ],
   });
   return post || reject(404);
@@ -105,24 +110,6 @@ router.post('/:post_id/file', [
   });
 
   return image.dataValues;
-}));
-
-router.get('/:id', [
-  validator.param('id').isInt({ min: 1 }),
-], control(async ({ req }) => {
-  const { id } = req.params;
-  const post = await Posts.findOne({
-    where: { id },
-    include: [
-      {
-        model: Users,
-        attributes: {
-          exclude: ['password'],
-        },
-      },
-    ],
-  });
-  return post || reject(404);
 }));
 
 // 수정 메소드
