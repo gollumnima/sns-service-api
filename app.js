@@ -7,16 +7,18 @@ const routes = require('./routes');
 
 const {
   NODE_ENV,
+  HOST,
 } = process.env;
 
 const whitelist = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
-  'http://15.165.17.58',
+  HOST,
 ];
 
 app.use(cors({
   origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
     const result = whitelist.includes(origin);
     return result ? cb(null, true) : cb(new Error());
   },

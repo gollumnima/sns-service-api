@@ -26,6 +26,10 @@ const Users = sequelize.define(
       allowNull: false,
       defaultValue: '',
     },
+    image_url: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+    },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

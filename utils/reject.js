@@ -26,5 +26,5 @@ const reject = async (statusCode, message, data) => {
 };
 
 module.exports = {
-  HTTP_ERROR, reject,
+  HTTP_ERROR, reject, HttpError,
 };

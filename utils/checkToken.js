@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Users = require('../models/users');
+const { HttpError } = require('./reject');
 
 const { AUTH_TOKEN_SECRET } = process.env;
 
@@ -22,6 +23,11 @@ const checkToken = async (req, res, next) => {
   }
 };
 
+const guardUser = (req, res, next) => (
+  req.user ? next() : next(new HttpError(401, 'Unauthenticate'))
+);
+
 module.exports = {
   checkToken,
+  guardUser,
 };

@@ -1,34 +1,16 @@
-const path = require('path');
-const fs = require('fs');
-
-const lodash = require('lodash');
 const express = require('express');
 
 const router = express.Router();
 const validator = require('express-validator');
-const multer = require('multer');
-
-const fileDir = path.join(__dirname, '../../static');
-
-if (!fs.existsSync(fileDir)) {
-  fs.mkdirSync(fileDir);
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, fileDir),
-  filename(req, file, cb) {
-    const words = file.originalname.split('.');
-    const filename = words.slice(0, -1).join('');
-    const ext = words.slice(-1).join('');
-    cb(null, `${encodeURIComponent(filename)}.${Date.now()}.${ext}`);
-  },
-});
-
-const upload = multer({ storage });
+const Upload = require('../../utils/upload');
 
 const { Posts, Users, Images } = require('../../models');
 const { checkToken } = require('../../utils/checkToken');
 const { control, reject } = require('../../utils/control');
+
+const upload = Upload((req, filename, ext) => (
+  `${encodeURIComponent(filename)}.${Date.now()}.${ext}`
+));
 
 router.get('/', [
   validator.query('limit').isInt({ min: 0, max: 100 }),
@@ -87,24 +69,22 @@ router.get('/:id', [
   return post || reject(404);
 }));
 
-router.post('/:post_id/file', [
-  validator.param('post_id').isInt({ min: 1 }),
-], checkToken, upload.single('file'), control(async ({ req }) => {
+router.post('/:postId/file', [
+  validator.param('postId').isInt({ min: 1 }),
+], checkToken, upload('file'), control(async ({ req }) => {
   const { user, file } = req;
-  const { post_id } = req.params;
+  const { postId } = req.params;
   if (!user) return reject(401);
   if (!file) return reject(400);
 
   const post = await Posts.findOne({
-    where: { id: post_id, user_id: user.id },
+    where: { id: postId, user_id: user.id },
   });
   if (!post) return reject(404);
 
-  const url = file.path.replace(fileDir, '');
-
   const image = await Images.create({
-    post_id,
-    url,
+    post_id: postId,
+    url: file.url,
     filename: file.originalname,
     type: file.mimetype,
   });
