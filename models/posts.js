@@ -16,6 +16,7 @@ const Posts = sequelize.define('Posts', {
   content: {
     type: DataTypes.TEXT,
     allowNull: false,
+    defaultValue: '',
   },
   status: {
     type: DataTypes.ENUM('DRAFT', 'HIDDEN', 'PUBLISHED', 'DELETED'),

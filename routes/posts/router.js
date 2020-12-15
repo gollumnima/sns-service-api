@@ -6,7 +6,7 @@ const validator = require('express-validator');
 const Upload = require('../../utils/upload');
 
 const { Posts, Users, Images } = require('../../models');
-const { checkToken } = require('../../utils/checkToken');
+const { checkToken, guardUser } = require('../../utils/checkToken');
 const { control, reject } = require('../../utils/control');
 
 const sanitizeObj = (keys = []) => fp.pipe(
@@ -43,21 +43,17 @@ router.get('/', [
   return { rows, count };
 }));
 
-router.post('/', [
-
-], checkToken, control(async ({ req }) => {
+router.post('/', checkToken, guardUser, control(async ({ req }) => {
   const { user } = req;
-  const { content = '' } = req.body;
-  if (!user) return reject(401);
   const result = await Posts.create({
-    content,
     user_id: user.id,
+    status: 'DRAFT',
   });
   return result.dataValues;
 }));
 
 router.get('/:id', [
-  validator.param('id').isInt({ min: 1 }),
+  validator.param('id').isInt({ min: 1 }).toInt(),
 ], control(async ({ req }) => {
   const { id } = req.params;
   const post = await Posts.findOne({
@@ -78,11 +74,10 @@ router.get('/:id', [
 }));
 
 router.post('/:postId/image', [
-  validator.param('postId').isInt({ min: 1 }),
-], checkToken, upload('file'), control(async ({ req }) => {
+  validator.param('postId').isInt({ min: 1 }).toInt(),
+], checkToken, guardUser, upload('file'), control(async ({ req }) => {
   const { user, file } = req;
   const { postId } = req.params;
-  if (!user) return reject(401);
   if (!file) return reject(400);
 
   const post = await Posts.findOne({
@@ -102,17 +97,17 @@ router.post('/:postId/image', [
 
 // 수정 메소드
 router.put('/:id', [
-  validator.param('id').isInt({ min: 1 }),
-], checkToken, control(async ({ req }) => {
+  validator.param('id').isInt({ min: 1 }).toInt(),
+  validator.body('status').isIn(['HIDDEN', 'PUBLISHED', 'DELETED']),
+], checkToken, guardUser, control(async ({ req }) => {
   const { id } = req.params;
   const { user } = req;
-  const { content } = req.body;
 
   const data = sanitizeObj([
-    'content', 'status',
+    'content',
+    'status',
   ])(req.body);
 
-  if (!user) return reject(401);
   const [result] = await Posts.update(data, {
     where: {
       id,
@@ -125,11 +120,10 @@ router.put('/:id', [
 
 // 삭제 메소드
 router.delete('/:id', [
-  validator.param('id').isInt({ min: 1 }),
-], checkToken, control(async ({ req }) => {
+  validator.param('id').isInt({ min: 1 }).toInt(),
+], checkToken, guardUser, control(async ({ req }) => {
   const { id } = req.params;
   const { user } = req;
-  if (!user) return reject(401);
   const [result] = await Posts.update({
     status: 'DELETED',
     deleted_at: Date.now(),
