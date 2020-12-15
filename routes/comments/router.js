@@ -10,8 +10,8 @@ const { control, reject } = require('../../utils/control');
 // 해당 글의 댓글 목록 조회
 router.get('/:post_id', [
   validator.param('post_id').isInt(),
-  validator.query('limit').isInt({ min: 0, max: 100 }),
-  validator.query('offset').isInt({ min: 0 }),
+  validator.query('limit').optional().isInt({ min: 0, max: 100 }),
+  validator.query('offset').optional().isInt({ min: 0 }),
 ], control(async ({ req }) => {
   const { limit = 20, offset = 0 } = req.query;
   const { post_id } = req.params;
