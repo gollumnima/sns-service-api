@@ -57,7 +57,7 @@ router.post('/login', [
   const flag = await bcrypt.compare(requestedPassword, hashedPassword);
   if (!flag) return reject(401);
   const token = await jwt.sign({ id: user.id }, AUTH_TOKEN_SECRET, {
-    expiresIn: '1h',
+    expiresIn: '1d',
   });
 
   return { user, token };
