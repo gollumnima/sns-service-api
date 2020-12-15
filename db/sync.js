@@ -16,6 +16,7 @@ const sync = async (sequelize, models) => {
       description: '테스트하는 유저1입니다',
       status: 'PUBLIC',
       created_at: '2020-10-02 09:00:00',
+      image_url: 'https://cdn.pixabay.com/photo/2019/11/13/12/37/dessert-4623573_960_720.jpg',
     }, {
       username: 'test2',
       password: await bcrypt.hash('5678', 10),
@@ -23,6 +24,7 @@ const sync = async (sequelize, models) => {
       description: '테스트하는 유저2입니다',
       status: 'PRIVATE',
       created_at: '2020-10-02 10:00:00',
+      image_url: 'https://cdn.pixabay.com/photo/2016/12/15/03/27/cocoa-1908020_960_720.jpg',
     }]);
     await init(models.Posts, [
       {
