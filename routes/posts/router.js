@@ -1,4 +1,5 @@
 const express = require('express');
+const fp = require('lodash/fp');
 
 const router = express.Router();
 const validator = require('express-validator');
@@ -7,6 +8,11 @@ const Upload = require('../../utils/upload');
 const { Posts, Users, Images } = require('../../models');
 const { checkToken } = require('../../utils/checkToken');
 const { control, reject } = require('../../utils/control');
+
+const sanitizeObj = (keys = []) => fp.pipe(
+  fp.pick(keys),
+  fp.pickBy(v => v !== undefined),
+);
 
 const upload = Upload((req, filename, ext) => (
   `${encodeURIComponent(filename)}.${Date.now()}.${ext}`
@@ -20,6 +26,7 @@ router.get('/', [
   const { rows, count } = await Posts.findAndCountAll({
     where: {
       deleted_at: null,
+      status: 'POSTED',
     },
     limit,
     offset,
@@ -100,10 +107,12 @@ router.put('/:id', [
   const { user } = req;
   const { content } = req.body;
 
+  const data = sanitizeObj([
+    'content', 'status',
+  ])(req.body);
+
   if (!user) return reject(401);
-  const [result] = await Posts.update({
-    content,
-  }, {
+  const [result] = await Posts.update(data, {
     where: {
       id,
       user_id: user.id,
