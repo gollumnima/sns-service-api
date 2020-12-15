@@ -7,9 +7,15 @@ const { HOST } = process.env;
 
 const fileDir = path.join(__dirname, '../static');
 
-if (!fs.existsSync(fileDir)) {
+const init = () => {
+  if (fs.existsSync(fileDir)) {
+    fs.rmdirSync(fileDir, { recursive: true, force: true });
+  }
   fs.mkdirSync(fileDir);
-}
+  return true;
+};
+
+init();
 
 const Upload = getFileName => name => {
   const storage = multer.diskStorage({
