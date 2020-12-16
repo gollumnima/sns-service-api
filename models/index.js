@@ -1,4 +1,5 @@
 // 관게로 엮기 위해 인덱스 만듬
+const sequelize = require('../db/connection');
 const Users = require('./users');
 const Posts = require('./posts');
 const Images = require('./images');
@@ -23,6 +24,7 @@ Comments.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
 Comments.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
 
 module.exports = {
+  sequelize,
   Users,
   Posts,
   Images,
