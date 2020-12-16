@@ -27,7 +27,7 @@ router.get('/', [
   const { rows, count } = await Posts.findAndCountAll({
     where: {
       deleted_at: null,
-      status: 'POSTED',
+      status: 'PUBLISHED',
     },
     limit,
     offset,
@@ -78,7 +78,7 @@ router.post('/:postId/image', [
 ], checkToken, guardUser, upload('file'), control(async ({ req }) => {
   const { user, file } = req;
   const { postId } = req.params;
-  if (!file) return reject(400);
+  if (!file) return reject(400, '이미지를 첨부하세요');
 
   const post = await Posts.findOne({
     where: { id: postId, user_id: user.id },
