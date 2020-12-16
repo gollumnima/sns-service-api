@@ -34,6 +34,7 @@ router.get('/', [
     },
     limit,
     offset,
+    order: ['id', 'DESC'],
     include: [{
       model: Users,
       attributes: ['id', 'username'],
