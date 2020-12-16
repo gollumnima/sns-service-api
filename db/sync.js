@@ -32,12 +32,14 @@ const sync = async (sequelize, models) => {
         user_id: '1',
         created_at: '2020-10-02 11:00:00',
         updated_at: Date.now(),
+        status: 'PUBLISHED',
       },
       {
         content: '나는 안은영 나를 아느냐',
         user_id: '2',
         created_at: '2020-10-02 11:10:00',
         updated_at: Date.now(),
+        status: 'PUBLISHED',
 
       },
       {
@@ -45,6 +47,7 @@ const sync = async (sequelize, models) => {
         user_id: '1',
         created_at: '2020-10-03 11:00:00',
         updated_at: Date.now(),
+        status: 'PUBLISHED',
       },
     ]);
     await init(models.Comments, [
