@@ -1,11 +1,14 @@
 const express = require('express');
 const fp = require('lodash/fp');
+const { Op } = require('sequelize');
 
 const router = express.Router();
 const validator = require('express-validator');
 const Upload = require('../../utils/upload');
 
-const { Posts, Users, Images } = require('../../models');
+const {
+  Posts, Users, Images, Likes, sequelize, Comments,
+} = require('../../models');
 const { checkToken, guardUser } = require('../../utils/checkToken');
 const { control, reject } = require('../../utils/control');
 
@@ -33,11 +36,31 @@ router.get('/', [
     offset,
     include: [{
       model: Users,
-      attributes: {
-        exclude: ['password'],
-      },
+      attributes: ['id', 'username'],
     }, {
       model: Images,
+      attributes: ['id', 'url'],
+    }, {
+      model: Likes,
+      attributes: ['id', 'user_id'],
+      where: {
+        deleted_at: null,
+      },
+      required: false,
+      include: [{
+        model: Users,
+        attributes: ['id', 'username'],
+      }],
+    }, {
+      model: Comments,
+      where: {
+        deleted_at: null,
+      },
+      required: false,
+      include: [{
+        model: Users,
+        attributes: ['id', 'username'],
+      }],
     }],
   });
   return { rows, count };
@@ -54,45 +77,49 @@ router.post('/', checkToken, guardUser, control(async ({ req }) => {
 
 router.get('/:id', [
   validator.param('id').isInt({ min: 1 }).toInt(),
+  checkToken,
 ], control(async ({ req }) => {
+  const { user } = req;
   const { id } = req.params;
   const post = await Posts.findOne({
-    where: { id },
-    include: [
-      {
+    where: {
+      id,
+      deleted_at: null,
+      [Op.or]: [
+        { status: 'PUBLISHED' },
+        { user_id: user.id },
+      ],
+    },
+    include: [{
+      model: Users,
+      attributes: ['id', 'username'],
+    }, {
+      model: Images,
+      attributes: ['id', 'url'],
+    }, {
+      model: Likes,
+      attributes: ['id', 'user_id'],
+      where: {
+        deleted_at: null,
+      },
+      required: false,
+      include: [{
         model: Users,
-        attributes: {
-          exclude: ['password'],
-        },
+        attributes: ['id', 'username'],
+      }],
+    }, {
+      model: Comments,
+      where: {
+        deleted_at: null,
       },
-      {
-        model: Images,
-      },
-    ],
+      required: false,
+      include: [{
+        model: Users,
+        attributes: ['id', 'username'],
+      }],
+    }],
   });
   return post || reject(404);
-}));
-
-router.post('/:postId/image', [
-  validator.param('postId').isInt({ min: 1 }).toInt(),
-], checkToken, guardUser, upload('file'), control(async ({ req }) => {
-  const { user, file } = req;
-  const { postId } = req.params;
-  if (!file) return reject(400, '이미지를 첨부하세요');
-
-  const post = await Posts.findOne({
-    where: { id: postId, user_id: user.id },
-  });
-  if (!post) return reject(404);
-
-  const image = await Images.create({
-    post_id: postId,
-    url: file.url,
-    filename: file.originalname,
-    type: file.mimetype,
-  });
-
-  return image.dataValues;
 }));
 
 // 수정 메소드
@@ -133,6 +160,66 @@ router.delete('/:id', [
       user_id: user.id,
     },
   });
+  return result || reject(404);
+}));
+
+router.post('/:postId/image', [
+  validator.param('postId').isInt({ min: 1 }).toInt(),
+], checkToken, guardUser, upload('file'), control(async ({ req }) => {
+  const { user, file } = req;
+  const { postId } = req.params;
+  if (!file) return reject(400, '이미지를 첨부하세요');
+
+  const post = await Posts.findOne({
+    where: { id: postId, user_id: user.id },
+  });
+  if (!post) return reject(404);
+
+  const image = await Images.create({
+    post_id: postId,
+    url: file.url,
+    filename: file.originalname,
+    type: file.mimetype,
+  });
+
+  return image.dataValues;
+}));
+
+router.post('/:postId/like', [
+  validator.param('postId').isInt({ min: 1 }).toInt(),
+], checkToken, guardUser, control(async ({ req }) => {
+  const { user } = req;
+  const { postId } = req.params;
+  const prevLike = await Likes.findOne({
+    where: {
+      post_id: postId,
+      user_id: user.id,
+    },
+  });
+
+  if (!prevLike) return prevLike.dataValues;
+
+  await Likes.create({
+    post_id: postId,
+    user_id: user.id,
+  });
+}));
+
+router.delete('/:postId/like', [
+  validator.param('postId').isInt({ min: 1 }).toInt(),
+], checkToken, guardUser, control(async ({ req }) => {
+  const { user } = req;
+  const { postId } = req.params;
+
+  const [result] = await Likes.update({
+    deleted_at: Date.now(),
+  }, {
+    where: {
+      post_id: postId,
+      user_id: user.id,
+    },
+  });
+
   return result || reject(404);
 }));
 
