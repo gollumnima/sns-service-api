@@ -15,7 +15,7 @@ const init = () => {
   return true;
 };
 
-init();
+// init();
 
 const Upload = getFileName => name => {
   const storage = multer.diskStorage({

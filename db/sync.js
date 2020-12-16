@@ -1,10 +1,12 @@
+const bcrypt = require('bcrypt');
+const sequelize = require('./connection');
+const models = require('../models');
 // 절대 프로덕션 모드에서 하면 안됨!
 const init = (model, data = []) => model.bulkCreate(data);
-const bcrypt = require('bcrypt');
 // sequelize가 모델링 후의 시점에서 관여하게끔!
 // models는 models 폴더의 index.js에서 export 하는 부분
 
-const sync = async (sequelize, models) => {
+const sync = async () => {
   try {
     console.log('sync...');
     await sequelize.sync({ force: true });
@@ -84,4 +86,4 @@ const sync = async (sequelize, models) => {
   }
 };
 
-module.exports = sync;
+sync();
