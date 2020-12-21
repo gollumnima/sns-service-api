@@ -6,6 +6,7 @@ const { AUTH_TOKEN_SECRET } = process.env;
 
 const checkToken = async (req, res, next) => {
   try {
+    if (!req.headers.authorization) return next();
     const [shouldBeBearer, token] = req.headers.authorization.split(' ');
     if (!token) return next();
     const { id } = jwt.verify(token, AUTH_TOKEN_SECRET);
@@ -18,9 +19,8 @@ const checkToken = async (req, res, next) => {
     req.user = foundUser;
     next();
   } catch (err) {
-    res.status(401).json({
-      message: 'unauthenticate',
-    });
+    req.user = null;
+    next();
   }
 };
 
