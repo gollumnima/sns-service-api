@@ -124,11 +124,10 @@ router.get('/:id', [
 
   const brothers = await sequelize.query(`
     SELECT
-      (SELECT MIN(id) FROM posts WHERE id > ${Number(id)}) AS next_id,
-      (SELECT MAX(id) FROM posts WHERE id < ${Number(id)}) AS prev_id
+      (SELECT MIN(id) FROM posts WHERE id > ${Number(id)} AND status = 'PUBLISHED') AS next_id,
+      (SELECT MAX(id) FROM posts WHERE id < ${Number(id)} AND status = 'PUBLISHED') AS prev_id
   `);
   const { next_id, prev_id } = lodash.get(brothers, '[0][0]', {});
-  console.log({ next_id, prev_id });
   return post
     ? { ...post.dataValues, next_id, prev_id }
     : reject(404);
