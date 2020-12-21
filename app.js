@@ -25,6 +25,8 @@ app.use(cors({
   credentials: true,
 }));
 
+app.disable('x-powered-by');
+
 app.use(express.json());
 
 if (NODE_ENV !== 'production') {
