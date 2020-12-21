@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/connection');
 
-const Files = sequelize.define('files', {
+const Files = sequelize.define('images', {
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
@@ -40,6 +40,6 @@ const Files = sequelize.define('files', {
     allowNull: true,
   },
 },
-{ tableName: 'files', underscored: true, timestamps: false });
+{ tableName: 'images', underscored: true, timestamps: false });
 
 module.exports = Files;

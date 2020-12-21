@@ -1,4 +1,5 @@
 const express = require('express');
+const lodash = require('lodash');
 const fp = require('lodash/fp');
 const { Op } = require('sequelize');
 
@@ -120,7 +121,17 @@ router.get('/:id', [
       }],
     }],
   });
-  return post || reject(404);
+
+  const brothers = await sequelize.query(`
+    SELECT
+      (SELECT MIN(id) FROM posts WHERE id > ${Number(id)}) AS next_id,
+      (SELECT MAX(id) FROM posts WHERE id < ${Number(id)}) AS prev_id
+  `);
+  const { next_id, prev_id } = lodash.get(brothers, '[0][0]', {});
+  console.log({ next_id, prev_id });
+  return post
+    ? { ...post.dataValues, next_id, prev_id }
+    : reject(404);
 }));
 
 // 수정 메소드
