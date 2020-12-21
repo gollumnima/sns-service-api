@@ -88,7 +88,7 @@ router.get('/:id', [
       deleted_at: null,
       [Op.or]: [
         { status: 'PUBLISHED' },
-        { user_id: user.id },
+        { user_id: user ? user.id : null },
       ],
     },
     include: [{
