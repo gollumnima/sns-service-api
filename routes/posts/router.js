@@ -208,12 +208,14 @@ router.post('/:postId/like', [
     },
   });
 
-  if (!prevLike) return prevLike.dataValues;
+  if (prevLike) return prevLike.dataValues;
 
-  await Likes.create({
+  const nextLike = await Likes.create({
     post_id: postId,
     user_id: user.id,
   });
+
+  return nextLike;
 }));
 
 router.delete('/:postId/like', [
