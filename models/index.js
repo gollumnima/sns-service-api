@@ -17,7 +17,7 @@ Images.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
 
 Posts.hasMany(Likes, { foreignKey: 'post_id', constraints: false });
 Likes.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
-Likes.belongsTo(Users, { foreignKey: 'post_id', constraints: false });
+Likes.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
 
 Posts.hasMany(Comments, { foreignKey: 'post_id', constraints: false });
 Comments.belongsTo(Posts, { foreignKey: 'post_id', constraints: false });
