@@ -205,6 +205,7 @@ router.post('/:postId/like', [
     where: {
       post_id: postId,
       user_id: user.id,
+      deleted_at: null,
     },
   });
 
