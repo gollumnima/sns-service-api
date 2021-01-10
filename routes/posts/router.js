@@ -25,14 +25,25 @@ const upload = Upload((req, filename, ext) => (
 router.get('/', [
   validator.query('limit').optional().isInt({ min: 0, max: 100 }).toInt(),
   validator.query('offset').optional().isInt({ min: 0 }).toInt(),
+  validator.query('user_id').optional().isInt({ min: 0 }).toInt(),
 ], control(async ({ req }) => {
-  const { limit = 20, offset = 0 } = req.query;
+  const { limit = 20, offset = 0, user_id } = req.query;
   console.log({ limit, offset });
+
+  const condition = {
+    deleted_at: null,
+    status: 'PUBLISHED',
+    user_id: user_id || undefined,
+  };
+
+  const where = sanitizeObj([
+    'deleted_at',
+    'status',
+    'user_id',
+  ]);
+
   const { rows, count } = await Posts.findAndCountAll({
-    where: {
-      deleted_at: null,
-      status: 'PUBLISHED',
-    },
+    where: where(condition),
     limit,
     offset,
     order: [['id', 'DESC']],
