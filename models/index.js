@@ -5,10 +5,16 @@ const Posts = require('./posts');
 const Images = require('./images');
 const Comments = require('./comments');
 const Likes = require('./likes');
+const Follows = require('./follows');
 
 // 원투매니 관계를 만들어줌
 // setIndex 과정을 자동으로 해주는 것
 // constraints : 외래키 만들 떄 제약조건이 생김. 3가지 제약조건이 있는데 가장 많이 쓰는게 cascade, no ation,
+Users.hasMany(Follows, { as: 'Followers', foreignKey: 'follower_id', constraints: false });
+Follows.belongsTo(Users, { as: 'Followers', foreignKey: 'follower_id', constraints: false });
+Users.hasMany(Follows, { as: 'Followees', foreignKey: 'followee_id', constraints: false });
+Follows.belongsTo(Users, { as: 'Followees', foreignKey: 'followee_id', constraints: false });
+
 Posts.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
 Users.hasMany(Posts, { foreignKey: 'user_id', constraints: false });
 
@@ -26,6 +32,7 @@ Comments.belongsTo(Users, { foreignKey: 'user_id', constraints: false });
 module.exports = {
   sequelize,
   Users,
+  Follows,
   Posts,
   Images,
   Comments,

@@ -1,10 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 // const jwt = require('json');
+const fp = require('lodash/fp');
 const validator = require('express-validator');
 const jwt = require('jsonwebtoken');
 const Upload = require('../../utils/upload');
 const { Users, Images } = require('../../models');
+
+const userServices = require('./services');
+const followServices = require('./followServices');
 const { checkToken, guardUser } = require('../../utils/checkToken');
 const { control, reject } = require('../../utils/control');
 
@@ -17,7 +21,10 @@ const upload = Upload((req, filename, ext) => (
 ));
 
 router.get('/', checkToken, control(async ({ req }) => {
-  const { limit = 20, offset = 0 } = req.query;
+  const {
+    limit = 20, offset = 0, find_by, find_value,
+  } = req.query;
+
   const { rows, count } = await Users.findAndCountAll({
     where: {
     },
@@ -64,27 +71,19 @@ router.post('/login', [
   // user까지 불러주면 비용면에서 더 합리적일 수 있음.
 }));
 
+router.get('/username/:username', [
+
+], control(async ({ req }) => {
+  const { username } = req.params;
+  const user = await userServices.findUserByUserName(username);
+  return user.dataValues;
+}));
+
 router.get('/self', checkToken, guardUser, control(async ({ req }) => {
   const { user } = req;
   const foundUser = await Users.findOne({
     where: {
       id: user.id,
-      deleted_at: null,
-    },
-    attributes: {
-      exclude: ['password'],
-    },
-  });
-  return foundUser || reject(404);
-}));
-
-router.get('/:id', [
-  validator.param('id').isInt({ min: 1 }),
-], control(async ({ req }) => {
-  const { id } = req.params;
-  const foundUser = await Users.findOne({
-    where: {
-      id,
       deleted_at: null,
     },
     attributes: {
@@ -137,6 +136,66 @@ router.put('/self', [
   });
   const { password: _, ...user } = result.dataValues;
   return user;
+}));
+
+router.get('/:id', [
+  validator.param('id').isInt({ min: 1 }),
+], control(async ({ req }) => {
+  const { id } = req.params;
+  const foundUser = await Users.findOne({
+    where: {
+      id,
+      deleted_at: null,
+    },
+    attributes: {
+      exclude: ['password'],
+    },
+  });
+  return foundUser || reject(404);
+}));
+
+router.get('/:userId/followers', [
+  validator.param('userId').isInt({ min: 1 }),
+  validator.query('limit').optional().isInt({ min: 0, max: 100 }).toInt(),
+  validator.query('offset').optional().isInt({ min: 0 }).toInt(),
+], control(async ({ req }) => {
+  const { userId } = req.params;
+  const { limit = 20, offset = 0 } = req.query;
+  const { rows, count } = await followServices.findFollowersOfUser(userId, { limit, offset });
+  return { rows, count };
+}));
+
+router.get('/:userId/followings', [
+  validator.param('userId').isInt({ min: 1 }),
+  validator.query('limit').optional().isInt({ min: 0, max: 100 }).toInt(),
+  validator.query('offset').optional().isInt({ min: 0 }).toInt(),
+], control(async ({ req }) => {
+  const { userId } = req.params;
+  const { limit = 20, offset = 0 } = req.query;
+  const { rows, count } = await followServices.findFollowingsOfUser(userId, { limit, offset });
+  return { rows, count };
+}));
+
+router.post('/:userId/followers', [
+  validator.param('userId').isInt({ min: 1 }),
+  checkToken,
+  guardUser,
+], control(async ({ req }) => {
+  const { user } = req;
+  const { userId } = req.params;
+  const result = await followServices.followUser(user.id, userId);
+  return result;
+}));
+
+router.delete('/:userId/followers', [
+  validator.param('userId').isInt({ min: 1 }),
+  checkToken,
+  guardUser,
+], control(async ({ req }) => {
+  const { user } = req;
+  const { userId } = req.params;
+  const result = await followServices.unfollowUser(user.id, userId);
+  return result;
 }));
 
 module.exports = router;

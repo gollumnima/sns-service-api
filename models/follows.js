@@ -2,11 +2,17 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../db/connection');
 
 const Follows = sequelize.define('Follows', {
-  follower: {
+  id: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  follower_id: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
-  followee: {
+  followee_id: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
