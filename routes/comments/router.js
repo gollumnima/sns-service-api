@@ -24,9 +24,7 @@ router.get('/:post_id', [
     offset,
     include: [{
       model: Users,
-      attributes: {
-        exclude: ['password'],
-      },
+      attributes: ['id', 'username', 'image_url'],
     }],
   });
   return {

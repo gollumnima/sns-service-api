@@ -49,7 +49,7 @@ router.get('/', [
     order: [['id', 'DESC']],
     include: [{
       model: Users,
-      attributes: ['id', 'username'],
+      attributes: ['id', 'username', 'image_url'],
     }, {
       model: Images,
       attributes: ['id', 'url'],
@@ -62,7 +62,7 @@ router.get('/', [
       required: false,
       include: [{
         model: Users,
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'image_url'],
       }],
     }, {
       model: Comments,
@@ -72,7 +72,7 @@ router.get('/', [
       required: false,
       include: [{
         model: Users,
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'image_url'],
       }],
     }],
   });
@@ -105,7 +105,7 @@ router.get('/:id', [
     },
     include: [{
       model: Users,
-      attributes: ['id', 'username'],
+      attributes: ['id', 'username', 'image_url'],
     }, {
       model: Images,
       attributes: ['id', 'url'],
@@ -118,7 +118,7 @@ router.get('/:id', [
       required: false,
       include: [{
         model: Users,
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'image_url'],
       }],
     }, {
       model: Comments,
@@ -128,7 +128,7 @@ router.get('/:id', [
       required: false,
       include: [{
         model: Users,
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'image_url'],
       }],
     }],
   });
