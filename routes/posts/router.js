@@ -196,7 +196,7 @@ router.post('/:postId/image', [
   const image = await Images.create({
     post_id: postId,
     url: file.url,
-    filename: file.originalname,
+    filename: encodeURIComponent(file.originalname),
     type: file.mimetype,
   });
 

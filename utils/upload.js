@@ -40,16 +40,21 @@ const upload = () => {
     s3,
     key(req, file, cb) {
       const ext = encodeURIComponent(file.originalname).split('.').slice(-1).join('');
-      return `${Date.now()}.${ext}`;
+      return cb(null, `${Date.now()}.${ext}`);
     },
   });
 
   const multerMW = multer({ storage }).single('file');
   const urlMW = (req, res, next) => {
-    const url = `${AWS_S3_BUCKET_BASE_URL}/${req.file.key}`;
-    if (!url) return next();
-    req.file.url = url;
-    return next();
+    try {
+      console.log('~~!!!');
+      const url = `${AWS_S3_BUCKET_BASE_URL}/${req.file.key}`;
+      if (!url) return next();
+      req.file.url = url;
+      return next();
+    } catch (err) {
+      next(err);
+    }
   };
   return [multerMW, urlMW];
 };

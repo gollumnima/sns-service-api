@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const bcrypt = require('bcrypt');
 const sequelize = require('./connection');
 const models = require('../models');
@@ -10,6 +12,7 @@ const sync = async () => {
   try {
     console.log('sync...');
     await sequelize.sync({ force: true });
+    // return process.exit(0);
     // server.js에서 db.sync({ force: true})와 같음
     await init(models.Users, [{
       username: 'test1',
