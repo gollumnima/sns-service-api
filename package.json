@@ -20,7 +20,6 @@
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
     "fast-csv": "^4.3.6",
-    "http-server": "^14.0.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mariadb": "^2.5.2",
