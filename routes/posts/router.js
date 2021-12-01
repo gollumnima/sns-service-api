@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 
 const router = express.Router();
 const validator = require('express-validator');
-const Upload = require('../../utils/upload');
+const upload = require('../../utils/upload');
 
 const {
   Posts, Users, Images, Likes, sequelize, Comments,
@@ -17,10 +17,6 @@ const sanitizeObj = (keys = []) => fp.pipe(
   fp.pick(keys),
   fp.pickBy(v => v !== undefined),
 );
-
-const upload = Upload((req, filename, ext) => (
-  `${encodeURIComponent(filename)}.${Date.now()}.${ext}`
-));
 
 router.get('/', [
   validator.query('limit').optional().isInt({ min: 0, max: 100 }).toInt(),
@@ -187,7 +183,7 @@ router.delete('/:id', [
 
 router.post('/:postId/image', [
   validator.param('postId').isInt({ min: 1 }).toInt(),
-], checkToken, guardUser, upload('file'), control(async ({ req }) => {
+], checkToken, guardUser, upload(), control(async ({ req }) => {
   const { user, file } = req;
   const { postId } = req.params;
   if (!file) return reject(400, '이미지를 첨부하세요');
