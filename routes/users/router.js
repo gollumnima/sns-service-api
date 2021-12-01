@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const fp = require('lodash/fp');
 const validator = require('express-validator');
 const jwt = require('jsonwebtoken');
-const Upload = require('../../utils/upload');
+const upload = require('../../utils/upload');
 const { Users, Images } = require('../../models');
 
 const userServices = require('./services');
@@ -15,10 +15,6 @@ const { control, reject } = require('../../utils/control');
 const router = express.Router();
 
 const { AUTH_TOKEN_SECRET } = process.env;
-
-const upload = Upload((req, filename, ext) => (
-  `u.${req.user.id}.${Date.now()}.${ext}`
-));
 
 router.get('/', checkToken, control(async ({ req }) => {
   const {
@@ -93,7 +89,7 @@ router.get('/self', checkToken, guardUser, control(async ({ req }) => {
   return foundUser || reject(404);
 }));
 
-router.post('/self/persona', checkToken, guardUser, upload('file'), control(async ({ req }) => {
+router.post('/self/persona', checkToken, guardUser, upload(), control(async ({ req }) => {
   const { user, file } = req;
   if (!file) return reject(400);
 
