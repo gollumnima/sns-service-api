@@ -37,6 +37,7 @@ app.use(express.static(path.join(__dirname, './static')));
 app.use('/api', routes);
 
 // app.get('/', (req, res) => {
+//   // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
 //   res.status(200).send('이백오케');
 // });
 
