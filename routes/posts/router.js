@@ -45,7 +45,7 @@ router.get('/', [
     order: [['id', 'DESC']],
     include: [{
       model: Users,
-      attributes: ['id', 'username', 'image_url'],
+      attributes: ['id', 'username', 'image_url', 'name'],
     }, {
       model: Images,
       attributes: ['id', 'url'],
