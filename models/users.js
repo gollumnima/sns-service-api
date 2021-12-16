@@ -22,11 +22,11 @@ const Users = sequelize.define(
     type: DataTypes.STRING(20),
     allowNull: false,
   },
-  // description: {
-  //   type: DataTypes.STRING(200),
-  //   allowNull: false,
-  //   defaultValue: '',
-  // },
+  description: {
+    type: DataTypes.STRING(200),
+    allowNull: false,
+    defaultValue: '',
+  },
   image_url: {
     type: DataTypes.STRING(200),
     allowNull: true,

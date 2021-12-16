@@ -35,13 +35,17 @@ router.post('/', [
   validator.body('username').isLength({ min: 4, max: 20 }),
   validator.body('name').isLength({ min: 1, max: 40 }),
   validator.body('password').isLength({ min: 4 }),
+  validator.body('description').isLength({ min: 0, max: 100 }),
 ], control(async ({ req }) => {
-  const { username, password, name } = req.body;
+  const {
+    username, password, name, description,
+  } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const result = await Users.create({
     username,
     name,
     password: hashedPassword,
+    description,
   });
   const { password: _, ...user } = result.dataValues;
   return user;
@@ -122,13 +126,17 @@ router.put('/self', [
   validator.body('username').isLength({ min: 4, max: 20 }),
   validator.body('name').isLength({ min: 1, max: 40 }),
   validator.body('password').isLength({ min: 4 }),
+  validator.body('descriptoin').isLength({ min: 0, max: 100 }),
 ], checkToken, guardUser, control(async ({ req }) => {
-  const { username, password, name } = req.body;
+  const {
+    username, password, name, description,
+  } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const result = await Users.create({
     username,
     name,
     password: hashedPassword,
+    description,
   });
   const { password: _, ...user } = result.dataValues;
   return user;

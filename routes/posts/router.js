@@ -163,6 +163,27 @@ router.put('/:id', [
   return result || reject(404);
 }));
 
+// router.put(`createRetweet/from=${postId}to=${userId}`
+router.put('createRetweet/:id', [
+  validator.param('id').isInt({ min: 1 }).toInt(),
+  validator.body('status').isIn(['HIDDEN', 'PUBLISHED', 'DELETED']),
+], checkToken, guardUser, control(async ({ req }) => {
+  const { id } = req.params;
+  const { user } = req;
+
+  const data = sanitizeObj([
+    'content',
+    'status',
+  ])(req.body);
+
+  const [result] = await Posts.update(data, {
+    where: {
+      id,
+      user_id: user.id,
+    },
+  });
+}));
+
 // 삭제 메소드
 router.delete('/:id', [
   validator.param('id').isInt({ min: 1 }).toInt(),
