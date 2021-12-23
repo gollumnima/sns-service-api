@@ -24,7 +24,7 @@ router.get('/:post_id', [
     offset,
     include: [{
       model: Users,
-      attributes: ['id', 'username', 'image_url'],
+      attributes: ['id', 'username', 'image_url', 'name'],
     }],
   });
   return {
@@ -46,6 +46,7 @@ router.post('/:post_id', [
     content,
     user_id: user.id,
     post_id,
+    name: user.name,
   });
   return result;
 }));
